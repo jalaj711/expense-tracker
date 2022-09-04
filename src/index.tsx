@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline, Container } from "@mui/material";
 import theme from "./styles/theme";
+import NavBar from "./components/NavBar";
 
 const LazyComponent = (props: { component: React.ElementType }) => (
   <Suspense fallback={<div>Loading...</div>}>
@@ -14,6 +15,8 @@ const LazyComponent = (props: { component: React.ElementType }) => (
 );
 
 const SignIn = lazy(() => import("./pages/SignIn"));
+const Home = lazy(() => import("./pages/Home"));
+const AddNew = lazy(() => import("./pages/AddNewExpense"));
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -24,11 +27,18 @@ root.render(
       <ThemeProvider theme={theme}>
         <Container component="main">
           <CssBaseline />
+          <NavBar />
+          <div style={{ height: "64px" }} />
           <Routes>
             <Route path="/" element={<App />} />
             <Route
               path="/signin"
               element={<LazyComponent component={SignIn} />}
+            />
+            <Route path="/home" element={<LazyComponent component={Home} />} />
+            <Route
+              path="/addnew"
+              element={<LazyComponent component={AddNew} />}
             />
           </Routes>
         </Container>
