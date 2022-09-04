@@ -20,6 +20,7 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
+import type { ProfileType } from "../database";
 import getDB from "../database";
 
 const drawerWidth = 240;
@@ -37,11 +38,11 @@ const AddNewProfileModal = (props: {
     const profile = value;
     setError("")
     getDB().then(db => {
-      db.get("profiles", profile).then(_res => {
+      db.getFromIndex("profiles", "by-name", profile).then(_res => {
         if(typeof _res !== 'undefined'){
           setError("This profile name is already in use.")
         } else {
-          db.put("profiles", 0, profile).then(res => {
+          db.put("profiles", { name: profile, amount: 0 }).then(res => {
             setValue('')
             setError('')
             props.handleClose()
@@ -97,11 +98,11 @@ const AddNewProfileModal = (props: {
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [profiles, setProfiles] = React.useState<string[]>([])
+  const [profiles, setProfiles] = React.useState<ProfileType[]>([])
 
   React.useEffect(() => {
     getDB().then(db => {
-      db.getAllKeys("profiles").then(result => {
+      db.getAll("profiles").then(result => {
         setProfiles(result)
       })
     })
@@ -146,9 +147,9 @@ export default function DrawerAppBar() {
         </div>
         <List>
           {profiles.map((item) => (
-            <ListItem key={item} disablePadding>
+            <ListItem key={item.name} disablePadding>
               <ListItemButton sx={{ textAlign: "center" }}>
-                <ListItemText primary={item} />
+                <ListItemText primary={item.name} secondary={item.amount} />
               </ListItemButton>
             </ListItem>
           ))}

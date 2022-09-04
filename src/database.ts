@@ -6,6 +6,10 @@ interface TransactionType {
     date: Date,
     description?: string,
   }
+  interface ProfileType {
+    name: string,
+    amount: number,
+  }
 
   interface Database extends DBSchema {
     transactions: {
@@ -14,20 +18,25 @@ interface TransactionType {
         indexes: { date: Date }
     },
     profiles: {
-        key: string,
-        value: number
+        key: number,
+        value: ProfileType,
+        indexes: { 'by-name': string }
     }
   }
 
 const getDatabase = () => {
   return openDB<Database>("expenseTracker", 1, {
     upgrade(db, oldVersion, newVersion, transaction) {
-        const transactionStore = db.createObjectStore('transactions', {
+      const transactionStore = db.createObjectStore('transactions', {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+        transactionStore.createIndex('date', 'date');
+        const profileStore = db.createObjectStore('profiles', {
             keyPath: 'id',
             autoIncrement: true,
           });
-          transactionStore.createIndex('date', 'date');
-          db.createObjectStore('profiles');
+          profileStore.createIndex('by-name', 'name');
     },
     blocked() {
       // …
@@ -41,4 +50,5 @@ const getDatabase = () => {
   });
 };
 
+export type { ProfileType, TransactionType };
 export default getDatabase;
