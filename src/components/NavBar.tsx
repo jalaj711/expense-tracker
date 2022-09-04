@@ -97,6 +97,15 @@ const AddNewProfileModal = (props: {
 export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [profiles, setProfiles] = React.useState<string[]>([])
+
+  React.useEffect(() => {
+    getDB().then(db => {
+      db.getAllKeys("profiles").then(result => {
+        setProfiles(result)
+      })
+    })
+  }, [modalOpen, mobileOpen])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -136,7 +145,7 @@ export default function DrawerAppBar() {
           </IconButton>
         </div>
         <List>
-          {["Default Profile", "Profile 1", "Profile 2"].map((item) => (
+          {profiles.map((item) => (
             <ListItem key={item} disablePadding>
               <ListItemButton sx={{ textAlign: "center" }}>
                 <ListItemText primary={item} />
