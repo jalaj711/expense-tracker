@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import type { ProfileType } from "../database";
 import getDB from "../database";
+import genId from "../utils/genKey";
 
 const drawerWidth = 240;
 const navItems = ["Home", "About", "Contact"];
@@ -42,7 +43,7 @@ const AddNewProfileModal = (props: {
         if(typeof _res !== 'undefined'){
           setError("This profile name is already in use.")
         } else {
-          db.put("profiles", { name: profile, amount: 0 }).then(res => {
+          db.put("profiles", { name: profile, amount: 0, id: genId() }).then(res => {
             setValue('')
             setError('')
             props.handleClose()

@@ -15,7 +15,7 @@ const LazyComponent = (props: { component: React.ElementType }) => (
 );
 
 const SignIn = lazy(() => import("./pages/SignIn"));
-const Home = lazy(() => import("./pages/Home"));
+const Profile = lazy(() => import("./pages/Profile"));
 const AddNew = lazy(() => import("./pages/AddNewExpense"));
 
 const root = ReactDOM.createRoot(
@@ -35,9 +35,9 @@ root.render(
               path="/signin"
               element={<LazyComponent component={SignIn} />}
             />
-            <Route path="/home" element={<LazyComponent component={Home} />} />
+            <Route path="/profile/:id" element={<LazyComponent component={Profile} />} />
             <Route
-              path="/addnew"
+              path="/addnew/:id"
               element={<LazyComponent component={AddNew} />}
             />
           </Routes>

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -6,14 +6,58 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Add } from "@mui/icons-material";
+import { useParams } from "react-router";
+import getDB, { type ProfileType } from "../database";
 
 export default function AddNew() {
+  const id = useParams().id as string;
+  const [profiles, setProfiles] = useState<ProfileType[]>([]);
+  const [profile, setProfile] = useState<string>("");
+  const [type, setType] = useState<string>("");
+
+  useEffect(() => {
+    getDB().then((db) => {
+      // TODO: Add a 404 check here
+      db.get("profiles", id).then(
+        (result) => result && setProfile(result.name)
+      );
+
+      db.getAll("profiles").then((result) => setProfiles(result));
+    });
+  }, [id]);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+    console.log([
+      data.get("title"),
+      data.get("amount"),
+      data.get("type"),
+      data.get("description"),
+      data.get("profile"),
+    ]);
+    const amount =
+      (data.get("amount") as unknown as number) *
+      (data.get("type") === "Expense" ? -1 : 1);
+    getDB().then((db) => {
+      db.getFromIndex(
+        "profiles",
+        "by-name",
+        data.get("profile") as string
+      ).then((prof) => {
+        if (prof) {
+          db.put("transactions", {
+            title: data.get("title") as string,
+            amount: amount,
+            description: data.get("description") as string | undefined,
+            profile: prof.id,
+            date: new Date(),
+          }).then(() => {
+            prof.amount += amount;
+            db.put("profiles", prof);
+          });
+        }
+      });
     });
   };
 
@@ -65,16 +109,39 @@ export default function AddNew() {
           />
           <TextField
             margin="normal"
-            id="outlined-select-currency"
+            id="outlined-select-amount"
             select
             label="Transaction Type"
-            value={"Expense"}
+            value={type}
+            name="type"
             fullWidth
-            //   onChange={handleChange}
+            required
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setType(event.target.value)
+            }
           >
             {["Expense", "Income"].map((option) => (
               <MenuItem key={option} value={option}>
                 {option}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            margin="normal"
+            id="outlined-select-profile"
+            select
+            label="Profile"
+            value={profile}
+            name="profile"
+            fullWidth
+            required
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setProfile(event.target.value)
+            }
+          >
+            {profiles.map((option, index) => (
+              <MenuItem key={index} value={option.name}>
+                {option.name}
               </MenuItem>
             ))}
           </TextField>

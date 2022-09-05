@@ -1,6 +1,10 @@
 import { Box, Card, Typography, Fab } from "@mui/material";
 import { useTheme } from "@mui/material";
 import { Add } from "@mui/icons-material";
+import getDB from "../database";
+import type { ProfileType, TransactionType } from "../database";
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
 
 const Expense = (props: {
   title: string;
@@ -40,10 +44,27 @@ const Expense = (props: {
 };
 
 export default function Home() {
+  const navigate = useNavigate();
   const theme = useTheme();
+  const profileId = useParams().id as string;
+  const [profile, setProfile] = useState<ProfileType>();
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
+
+  useEffect(() => {
+    getDB().then((db) => {
+      db.get("profiles", profileId).then((profile) => {
+        setProfile(profile);
+        db.getAllFromIndex("transactions", "by-profile", profileId).then(
+          (transacs) => {
+            setTransactions(transacs);
+          }
+        );
+      });
+    });
+  });
   return (
     <Box my={2}>
-      <Typography variant="h3">Dashboard</Typography>
+      <Typography variant="h3">{profile?.name}</Typography>
       <Card
         variant="outlined"
         sx={{ width: "100%", my: 2, p: 4, borderRadius: 4 }}
@@ -54,7 +75,7 @@ export default function Home() {
         >
           Sun, Sep 4
         </Typography>
-        <Typography variant="h3">₹ 2716.45</Typography>
+        <Typography variant="h3">₹ {profile?.amount}</Typography>
         <Typography
           variant="body1"
           sx={{ color: theme.palette.text.secondary }}
@@ -65,48 +86,21 @@ export default function Home() {
 
       <Typography variant="h6">Recent transactions</Typography>
       <div>
-        <Expense
-          title="Some Random Expense"
-          description="Testing the description"
-          amount={45}
-        />
-        <Expense
-          title="Some Random Expense"
-          description="Testing the descriptionTesting the descriptionTesting the descriptionTesting the descriptionTesting the descriptionTesting the description"
-          amount={-20}
-        />
-        <Expense
-          title="Some Random Expense"
-          description="Testing the description"
-          amount={-45.23}
-        />
-        <Expense
-          title="Some Random Expense"
-          description="Testing the description"
-          amount={45}
-        />
-        <Expense
-          title="Some Random Expense"
-          description="Testing the description"
-          amount={43}
-        />
-        <Expense
-          title="Some Random Expense"
-          description="Testing the description"
-          amount={120}
-        />
-        <Expense
-          title="Some Random Expense"
-          description="Testing the description"
-          amount={180}
-        />
+        {transactions.map((elem, key) => (
+          <Expense
+            title={elem.title}
+            description={elem.description}
+            amount={elem.amount}
+            key={key}
+          />
+        ))}
       </div>
       <Fab
         color="primary"
         aria-label="add"
         sx={{ position: "fixed", bottom: 24, right: 24 }}
       >
-        <Add />
+        <Add onClick={() => navigate("/addnew/" + profileId)} />
       </Fab>
     </Box>
   );
