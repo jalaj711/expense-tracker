@@ -41,6 +41,12 @@ const getDatabase = () => {
         autoIncrement: false,
       });
       profileStore.createIndex("by-name", "name");
+
+      profileStore.add({
+        id: "default",
+        name: "Default Profile",
+        amount: 0
+      })
     },
     blocked() {
       // …
