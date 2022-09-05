@@ -6,10 +6,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Add } from "@mui/icons-material";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import getDB, { type ProfileType } from "../database";
 
 export default function AddNew() {
+  const navigate = useNavigate();
   const id = useParams().id as string;
   const [profiles, setProfiles] = useState<ProfileType[]>([]);
   const [profile, setProfile] = useState<string>("");
@@ -54,7 +55,9 @@ export default function AddNew() {
             date: new Date(),
           }).then(() => {
             prof.amount += amount;
-            db.put("profiles", prof);
+            db.put("profiles", prof).then(() =>
+              navigate("/profile/" + prof.id)
+            );
           });
         }
       });

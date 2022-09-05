@@ -23,6 +23,7 @@ import {
 import type { ProfileType } from "../database";
 import getDB from "../database";
 import genId from "../utils/genKey";
+import { useNavigate } from "react-router";
 
 const drawerWidth = 240;
 const navItems = ["Home", "About", "Contact"];
@@ -34,6 +35,7 @@ const AddNewProfileModal = (props: {
 
   const [error, setError] = React.useState('')
   const [value, setValue] = React.useState('')
+  const navigate = useNavigate()
 
   const handleAddProfile = () => {
     const profile = value;
@@ -47,7 +49,7 @@ const AddNewProfileModal = (props: {
             setValue('')
             setError('')
             props.handleClose()
-            // TODO: redirect to the page for that profile
+            navigate("/profile/" + res)
           }).catch(error => {
             setError(error)
           })
@@ -100,6 +102,7 @@ export default function DrawerAppBar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [profiles, setProfiles] = React.useState<ProfileType[]>([])
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     getDB().then(db => {
@@ -148,7 +151,7 @@ export default function DrawerAppBar() {
         </div>
         <List>
           {profiles.map((item) => (
-            <ListItem key={item.name} disablePadding>
+            <ListItem key={item.name} disablePadding onClick={() => navigate("/profile/" + item.id)}>
               <ListItemButton sx={{ textAlign: "center" }}>
                 <ListItemText primary={item.name} secondary={item.amount} />
               </ListItemButton>
