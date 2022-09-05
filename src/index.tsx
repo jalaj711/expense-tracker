@@ -31,14 +31,14 @@ root.render(
           <NavBar />
           <div style={{ height: "64px" }} />
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route path={`${process.env.PUBLIC_URL}/`} element={<App />} />
             <Route
-              path="/signin"
+              path={`${process.env.PUBLIC_URL}/signin`}
               element={<LazyComponent component={SignIn} />}
             />
-            <Route path="/profile/:id" element={<LazyComponent component={Profile} />} />
+            <Route path={`${process.env.PUBLIC_URL}/profile/:id`} element={<LazyComponent component={Profile} />} />
             <Route
-              path="/addnew/:id"
+              path={`${process.env.PUBLIC_URL}/addnew/:id`}
               element={<LazyComponent component={AddNew} />}
             />
           </Routes>
