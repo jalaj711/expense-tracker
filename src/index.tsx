@@ -7,6 +7,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline, Container } from "@mui/material";
 import theme from "./styles/theme";
 import NavBar from "./components/NavBar";
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const LazyComponent = (props: { component: React.ElementType }) => (
   <Suspense fallback={<div>Loading...</div>}>
@@ -51,3 +52,4 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+serviceWorkerRegistration.register()
