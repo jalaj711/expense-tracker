@@ -49,7 +49,7 @@ const AddNewProfileModal = (props: {
             setValue('')
             setError('')
             props.handleClose()
-            navigate("/profile/" + res)
+            navigate(process.env.PUBLIC_URL + "/profile/" + res)
           }).catch(error => {
             setError(error)
           })
@@ -151,7 +151,7 @@ export default function DrawerAppBar() {
         </div>
         <List>
           {profiles.map((item) => (
-            <ListItem key={item.name} disablePadding onClick={() => navigate("/profile/" + item.id)}>
+            <ListItem key={item.name} disablePadding onClick={() => navigate(process.env.PUBLIC_URL + "/profile/" + item.id)}>
               <ListItemButton sx={{ textAlign: "center" }}>
                 <ListItemText primary={item.name} secondary={item.amount} />
               </ListItemButton>

@@ -56,7 +56,7 @@ export default function AddNew() {
           }).then(() => {
             prof.amount += amount;
             db.put("profiles", prof).then(() =>
-              navigate("/profile/" + prof.id)
+              navigate(process.env.PUBLIC_URL + "/profile/" + prof.id)
             );
           });
         }

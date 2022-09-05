@@ -100,7 +100,7 @@ export default function Home() {
         aria-label="add"
         sx={{ position: "fixed", bottom: 24, right: 24 }}
       >
-        <Add onClick={() => navigate("/addnew/" + profileId)} />
+        <Add onClick={() => navigate(process.env.PUBLIC_URL + "/addnew/" + profileId)} />
       </Fab>
     </Box>
   );
